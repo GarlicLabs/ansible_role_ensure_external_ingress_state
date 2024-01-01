@@ -1,5 +1,7 @@
 # ansible_role_ensure_external_ingress_state
 
+[![Validate infrastructure as code](https://github.com/NeatLeap/ansible_role_ensure_external_ingress_state/actions/workflows/validation.yml/badge.svg)](https://github.com/NeatLeap/ansible_role_ensure_external_ingress_state/actions/workflows/validation.yml)
+
 Deploys nginx ingress to your kubernetes cluster as NodePorts, so your cluster will be reachable from the outside.  
 Use this if you want to have external reachable k8s cluster without using loadbalancer services.   
 

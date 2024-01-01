@@ -55,9 +55,6 @@ jobs:
 
       - uses: AbsaOSS/k3d-action@v2
         name: "Create Single Cluster"
-        with:
-          cluster-name: "test-cluster-1"
-          args: --agents 1
 
       - name: Run Molecule tests.
         run: molecule test

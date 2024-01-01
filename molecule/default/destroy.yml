@@ -3,22 +3,15 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  # no_log: "{{ molecule_no_log }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
-    # Developer must implement.
-
-    # Mandatory configuration for Molecule to function.
-
-    - name: Populate instance config
-      ansible.builtin.set_fact:
-        instance_conf: {}
-
-    - name: Dump instance config
-      ansible.builtin.copy:
-        content: |
-          # Molecule managed
-
-          {{ instance_conf | to_json | from_json | to_yaml }}
-        dest: "{{ molecule_instance_config }}"
-        mode: "0600"
-      when: server.changed | default(false) | bool  # noqa no-handler
+    - name: Destroy molecule instance(s)
+      ansible.builtin.command: k3d cluster delete {{ item.name }}
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: false
+      async: 7200
+      poll: 0
+      ignore_errors: true

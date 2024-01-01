@@ -8,3 +8,4 @@
     - name: "Include neatleap.ensure_external_ingress_state"
       ansible.builtin.include_role:
         name: "ansible_role_ensure_external_ingress_state"
+      delegate_to: localhost

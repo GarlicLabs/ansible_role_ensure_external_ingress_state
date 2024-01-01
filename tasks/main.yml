@@ -23,16 +23,3 @@
             https: "{{ external_ingress_https_port }}"
             tcp:
               8080: "{{ external_ingress_tcp_port }}"
-
-- name: Wait till ingress-nginx is running
-  kubernetes.core.k8s_info:
-    kubeconfig: "{{ external_ingress_kubeconfig }}"
-    kind: Deployment
-    wait: true
-    name: "{{ item }}"
-    namespace: "{{ external_ingress_namespace }}"
-    wait_sleep: 10
-    wait_timeout: 360
-  loop:
-    - ingress-nginx-controller
-  when: external_ingress_state is search('present')

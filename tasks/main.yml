@@ -1,0 +1,38 @@
+---
+
+- name: Ensure external ingress state is {{ external_ingress_state }}
+  kubernetes.core.helm:
+    kubeconfig: "{{ external_ingress_kubeconfig }}"
+    name: ingress-nginx
+    chart_repo_url: "https://kubernetes.github.io/ingress-nginx"
+    chart_ref: ingress-nginx
+    release_namespace: "{{ external_ingress_namespace }}"
+    release_state: "{{ external_ingress_state }}"
+    chart_version: "{{ external_ingress_chart_version }}"
+    create_namespace: "{{ external_ingress_create_namespace }}"
+    values:
+      controller:
+        config:
+          proxy-body-size: "{{ external_ingress_proxy_body_size }}"
+        replicaCount: "{{ external_ingress_replica_count }}"
+        minAvailable: "{{ external_ingress_min_available }}"
+        service:
+          type: NodePort
+          nodePorts:
+            http: "{{ external_ingress_http_port }}"
+            https: "{{ external_ingress_https_port }}"
+            tcp:
+              8080: "{{ external_ingress_tcp_port }}"
+
+- name: Wait till ingress-nginx is running
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ external_ingress_kubeconfig }}"
+    kind: Deployment
+    wait: true
+    name: "{{ item }}"
+    namespace: "{{ external_ingress_namespace }}"
+    wait_sleep: 10
+    wait_timeout: 360
+  loop:
+    - ingress-nginx-controller
+  when: external_ingress_state is search('present')

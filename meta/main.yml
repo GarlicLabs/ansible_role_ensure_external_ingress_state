@@ -1,0 +1,16 @@
+galaxy_info:
+  author: ngptzmann, lsiemer
+  namespace: neatleap
+  description: installs external reachable nginx ingress controller
+  license: GPL-3.0-only
+
+  min_ansible_version: "2.11"
+
+  platforms:
+  - name: Debian
+
+  galaxy_tags: 
+    - helm
+    - kubernetes
+    - ingress
+    - nginx

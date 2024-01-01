@@ -1,0 +1,19 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: Assure ingress-nginx is installed
+    kubernetes.core.helm:
+      name: ingress-nginx
+      chart_repo_url: "https://kubernetes.github.io/ingress-nginx"
+      chart_ref: ingress-nginx
+      release_namespace: default
+      release_state: present
+    register: result
+  - name: Assure ingress-nginx is installed
+    ansible.builtin.assert:
+      that: 
+      - result.status.status == "deployed"

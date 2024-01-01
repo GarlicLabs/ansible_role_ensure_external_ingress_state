@@ -1,0 +1,68 @@
+name: Validate infrastructure as code
+
+on:
+  push:
+    branches:
+      - "dev"
+      - "main"
+  pull_request:
+    branches:
+      - "dev"
+      - "main"
+  schedule:
+    - cron: "0 7 * * 0"
+jobs:
+  Linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@cc7f2f599318aa344fca575c635c2caa6d492a14
+
+  Security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure results dir
+        run: mkdir -p kics-results/
+      
+      - name: Run kics scan
+        uses: checkmarx/kics-github-action@3f21d96af19575aae6bf83ebdd7dee91d02fa746
+        with:
+          path: ./
+          output_path: kics-results/
+          fail_on: high,medium
+          type: Ansible
+      
+      - name: Remove results directory
+        run: rm -rf kics-results/
+
+  Testing:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - debian12
+          - debian11
+          
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v4
+        with:
+          path: 'ansible_role_ensure_external_ingress_state'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install -r ansible_role_ensure_external_ingress_state/pip_requirements.txt
+
+      - name: Run Molecule tests.
+        run: molecule test
+        working-directory: 'ansible_role_ensure_external_ingress_state'
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}

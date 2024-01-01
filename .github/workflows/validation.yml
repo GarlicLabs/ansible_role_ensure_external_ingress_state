@@ -39,12 +39,6 @@ jobs:
 
   Testing:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        distro:
-          - debian12
-          - debian11
-          
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v4
@@ -59,10 +53,15 @@ jobs:
       - name: Install test dependencies.
         run: pip3 install -r ansible_role_ensure_external_ingress_state/pip_requirements.txt
 
+      - uses: AbsaOSS/k3d-action@v2
+        name: "Create Single Cluster"
+        with:
+          cluster-name: "test-cluster-1"
+          args: --agents 1
+
       - name: Run Molecule tests.
         run: molecule test
         working-directory: 'ansible_role_ensure_external_ingress_state'
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}

@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars: 
-  - external_ingress_kubeconfig: "$HOME/.kube/config"
+  - external_ingress_kubeconfig: ""
   tasks:
     - name: "Include neatleap.ensure_external_ingress_state"
       ansible.builtin.include_role:

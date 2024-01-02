@@ -1,2 +1,5 @@
-skip-list:
-  - 'syntax-check[unknown-module]'
+exclude_paths:
+  - molecule/
+
+skip_list:
+  - 'unknown-module'
